@@ -1,18 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BookingController;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+// 1. Initial form
+Route::get('/', [BookingController::class, 'create'])->name('booking.create');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// 2. Submits the form and shows prices
+Route::post('/search', [BookingController::class, 'search'])->name('booking.search');
+
+// 3. Confirms and stores the booking
+Route::post('/confirm', [BookingController::class, 'store'])->name('booking.store');
+
+// 4. The final Thank You page
+Route::get('/thankyou/{booking}', [BookingController::class, 'thankyou'])->name('booking.thankyou');
+
+//Route::get('/', function () {
+  //  return view('welcome');
+//});
