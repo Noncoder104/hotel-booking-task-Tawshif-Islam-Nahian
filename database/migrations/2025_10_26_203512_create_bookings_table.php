@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('room_category_id')->constrained('room_categories');
+            $table->string('user_name');
+            $table->string('email');
+            $table->string('phone');
+            $table->date('from_date');
+            $table->date('to_date');
+            $table->integer('total_base_price');
+            $table->integer('final_price');
             $table->timestamps();
         });
     }
