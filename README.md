@@ -1,66 +1,58 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+   hotel-booking-task-Tawshif-Islam-Nahian 
+ 
+Simple Hotel Booking System (PHP/Laravel) 
+ 
+Hey there! This is my submission for the Software Engineer Intern technical evaluation. I focused on making the core logic—especially the pricing rules—as clean and architecturally sound as possible. 
+ 
+### Key Technical Decisions: 
+ 
+**MVC Adherence (Clean Code):** The dynamic pricing logic (surcharge and discount calculation) was intentionally implemented right inside the **`app/Models/RoomCategory.php`** file. This was a deliberate architectural choice to ensure the Model handles its own data rules, keeping the Controller clean. 
+**Database:** Configured to use **SQLite** for instant setup, simplifying the reviewer's environment and avoiding external dependency headaches. 
+**Availability:** Availability is checked per night, per category, against a hardcoded limit of 3 rooms. 
+ 
+--- 
+ 
+Installation and Setup Guide...
+ 
+This guide assumes you have PHP, Composer, and Git ready to go. 
+ 
+# 1. Initial Setup 
+ 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Clone the project and navigate into the directory 
+git clone [https://github.com/Noncoder104/hotel-booking-task-Tawshif-Islam-Nahian.git](https://github.com/Noncoder104/hotel-booking-task-Tawshif-Islam-Nahian.git) 
+cd hotel-booking-task-Tawshif-Islam-Nahian 
+ 
+Install PHP dependencies and copy the environment file 
+composer install 
+cp .env.example .env 
+php artisan key:generate 
+ 
 
-## About Laravel
+# 2. Database (SQLite) 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+We're using a simple file-based database, so no server setup is needed here. 
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Bash 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Create the empty SQLite file 
+touch database/database.sqlite 
+ 
+Run all migrations (tables) and seed the room data (prices) 
+php artisan migrate:fresh --seed 
+ 
 
-## Learning Laravel
+Note: The .env file is already set to DB_CONNECTION=sqlite. 
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# 3. Run the App 
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Bash 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Start the local development server 
+php artisan serve 
+ 
 
-## Laravel Sponsors
+Access the booking system in your browser: http://127.0.0.1:8000 
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+ 
+Thank you for your time! 
