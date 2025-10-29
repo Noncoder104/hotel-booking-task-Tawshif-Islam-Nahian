@@ -10,42 +10,8 @@ use Illuminate\Routing\Controller;
 
 class BookingController extends Controller
 {
-    private function calculatePrice(RoomCategory $category, $fromDate, $toDate)
-{
-    $start = Carbon::parse($fromDate);
-    $end = Carbon::parse($toDate);
-    $totalBasePrice = 0;
-    $totalSurchargedPrice = 0;
-    $nights = $start->diffInDays($end); // Get number of nights
-
-    // Calculate price per day, applying weekday/weekend rules [cite: 16]
-    for ($date = clone $start; $date->lt($end); $date->addDay()) {
-        $basePrice = $category->base_price;
-        $surcharge = 0;
-
-        // Apply weekend pricing rule: Friday and Saturday increase by 20% [cite: 12, 23]
-        if ($date->isFriday() || $date->isSaturday()) {
-            $surcharge = $basePrice * 0.20;
-        }
-
-        $totalBasePrice += $basePrice;
-        $totalSurchargedPrice += ($basePrice + $surcharge);
-    }
-
-    $finalPrice = $totalSurchargedPrice;
-
-    // Apply 10% discount for 3 or more consecutive nights 
-    if ($nights >= 3) {
-        $discountAmount = $totalSurchargedPrice * 0.10;
-        $finalPrice -= $discountAmount;
-    }
-
-    return [
-        'nights' => $nights,
-        'total_base_price' => round($totalBasePrice), // Base price must be shown [cite: 25]
-        'final_price' => round($finalPrice),         // Final price must be shown [cite: 25]
-    ];
-}
+   
+    
 
 /**
  * Checks if a room category is available for all days in the range.
@@ -54,13 +20,13 @@ private function checkAvailability($categoryId, $fromDate, $toDate)
 {
     $start = Carbon::parse($fromDate);
     $end = Carbon::parse($toDate);
-    $roomLimit = 3; // 3 rooms available per day 
+    $MAX_ROOMS_PER_CATEGORY = 3; // 3 rooms available per day 
 
-    for ($date = clone $start; $date->lt($end); $date->addDay()) {
+    for ($currentNight = clone $start; $currentNight->lt($end); $currentNight->addDay()) {
         // Count existing bookings that overlap with this specific night
         $bookedRooms = Booking::where('room_category_id', $categoryId)
-            ->whereDate('from_date', '<=', $date)
-            ->whereDate('to_date', '>', $date)
+            ->whereDate('from_date', '<=',$currentNight )
+            ->whereDate('to_date', '>', $currentNight)
             ->count();
 
         // If all 3 rooms are booked for this date [cite: 19]
@@ -81,11 +47,16 @@ public function search(Request $request)
 {
     // Validation [cite: 13, 14]
     $data = $request->validate([
-        'user_name' => 'required|string|max:255',
-        'email' => ['required', 'email', 'regex:/^.+@.+\..+$/i'], // Basic regex validation [cite: 13]
-        'phone' => ['required', 'string', 'regex:/^(\+)?\d{7,15}$/'], // Basic regex validation [cite: 13]
-        'from_date' => 'required|date|after_or_equal:today', // Cannot be in the past [cite: 14]
-        'to_date' => 'required|date|after:from_date',
+        // Group required string inputs together
+    'user_name' => 'required|string|max:255',
+    
+    // Separate complex regex validation lines
+    'email' => ['required', 'email', 'regex:/^.+@.+\..+$/i'], 
+    'phone' => ['required', 'string', 'regex:/^(\+)?\d{7,15}$/'], 
+
+    // Group date validation and apply date rules
+    'from_date' => ['required', 'date', 'after_or_equal:today'],
+    'to_date' => ['required', 'date', 'after:from_date'],
     ]);
 
     // Calculate prices and check availability for all categories
@@ -95,7 +66,7 @@ public function search(Request $request)
             $data['from_date'],
             $data['to_date']
         );
-        $category->pricing = $this->calculatePrice(
+        $category->pricing = $category->calculatePriceForDuration(
             $category,
             $data['from_date'],
             $data['to_date']
@@ -123,7 +94,7 @@ public function store(Request $request)
     ]);
 
     $category = RoomCategory::findOrFail($data['room_category_id']);
-    $pricing = $this->calculatePrice($category, $data['from_date'], $data['to_date']);
+    $pricing = $category->calculatePriceForDuration($category, $data['from_date'], $data['to_date']);
 
     // Final availability check (critical check)
     if (!$this->checkAvailability($category->id, $data['from_date'], $data['to_date'])) {
@@ -140,7 +111,7 @@ public function store(Request $request)
         'from_date' => $data['from_date'],
         'to_date' => $data['to_date'],
         'total_base_price' => $pricing['total_base_price'],
-        'final_price' => $pricing['final_price'],
+        'final_price' => $pricing['final_price'], // Storing final amount after all surcharge and discounts are applied
     ]);
 
     // After booking, the user is redirected to a Thank You page [cite: 33]
