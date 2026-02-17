@@ -2,7 +2,7 @@
  
 Simple Hotel Booking System (PHP/Laravel) 
  
-Hey there! This is my submission for the Software Engineer Intern technical evaluation. I focused on making the core logic—especially the pricing rules—as clean and architecturally sound as possible. 
+Hey there! I focused on making the core logic—especially the pricing rules—as clean and architecturally sound as possible. 
  
 ### Key Technical Decisions: 
  
